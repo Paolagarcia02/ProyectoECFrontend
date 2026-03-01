@@ -1,15 +1,11 @@
 <script setup lang="ts">
-
-
-
-
-
+// Componente del footer - No requiere lógica JavaScript por ahora
 </script>
 
 <template>
     <footer class="footer">
         <div class="container footer__container">
-
+            <!-- Sección de marca/logo -->
             <div class="footer__brand">
                 <a class="footer__logo-link">
                     <span class="footer__logo-text">SAVIA</span>
@@ -17,6 +13,7 @@
                 <p class="footer__slogan">Cuidamos vidas, unimos familias.</p>
             </div>
 
+            <!-- Sección de enlaces de navegación -->
             <div class="footer__column">
                 <h3 class="footer__title">Explora</h3>
                 <ul class="footer__list">
@@ -27,6 +24,7 @@
                 </ul>
             </div>
 
+            <!-- Sección de enlaces legales -->
             <div class="footer__column">
                 <h3 class="footer__title">Legal</h3>
                 <ul class="footer__list">
@@ -36,6 +34,7 @@
                 </ul>
             </div>
 
+            <!-- Sección de contacto y redes sociales -->
             <div class="footer__column">
                 <h3 class="footer__title">Urgencias</h3>
                 <p class="footer__text">
@@ -46,9 +45,9 @@
                     <a class="social-link" aria-label="Facebook">Facebook</a>
                 </div>
             </div>
-
         </div>
 
+        <!-- Sección de copyright -->
         <div class="footer__bottom">
             <p class="footer__copyright">© 2025 Clínica Veterinaria SAVIA.</p>
         </div>
@@ -185,7 +184,7 @@
 
     // --- COPYRIGHT ---
     &__bottom {
-        background-color: rgba(0, 0, 0, 0.2); // Oscurecer un poco el verde de fondo
+        background-color: rgba(0, 0, 0, 0.2); 
         padding: 20px;
         text-align: center;
         font-family: v.$font-subtitle;

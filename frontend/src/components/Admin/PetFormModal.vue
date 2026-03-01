@@ -1,18 +1,26 @@
 <script setup lang="ts">
+/**
+ * Componente PetFormModal
+ * Modal para crear o editar mascotas en el panel de administración
+ * Incluye validación de formulario con Yup
+ */
 import { ref, watch } from 'vue';
 import type { Pet } from '@/models/type';
 import * as yup from 'yup';
 
+// Props: recibe si el modal está visible y la mascota a editar (opcional)
 const props = defineProps<{
     show: boolean;
     pet?: Pet | null;
 }>();
 
+// Emits: emite eventos para cerrar el modal o guardar los datos
 const emit = defineEmits<{
     (e: 'close'): void;
     (e: 'save', pet: Partial<Pet>): void;
 }>();
 
+// Estado del formulario con todos los campos de la mascota
 const formData = ref<{
     name: string;
     species: string;
@@ -31,8 +39,10 @@ const formData = ref<{
     status: 'En Adopción'
 });
 
+// Objeto para almacenar los errores de validación
 const errors = ref<Record<string, string>>({});
 
+// Función para resetear el formulario a sus valores iniciales
 const resetForm = () => {
     formData.value = {
         name: '',
@@ -46,6 +56,7 @@ const resetForm = () => {
     errors.value = {};
 };
 
+// Esquema de validación con Yup
 const petSchema = yup.object({
     name: yup.string().required('El nombre es obligatorio').min(2, 'Mínimo 2 caracteres'),
     species: yup.string().required('La especie es obligatoria'),
@@ -56,8 +67,10 @@ const petSchema = yup.object({
     status: yup.string().oneOf(['Con Dueño', 'En Adopción', 'Adoptado']).required()
 });
 
+// Watcher: cuando cambia la prop 'pet', actualizamos el formulario
 watch(() => props.pet, (newPet) => {
     if (newPet) {
+        // Si hay una mascota, rellenamos el formulario con sus datos
         const birthDate = newPet.birth_date || '';
         const dateOnly = birthDate.includes('T') ? birthDate.split('T')[0]! : birthDate;
         formData.value = {
@@ -70,23 +83,30 @@ watch(() => props.pet, (newPet) => {
             status: newPet.status
         };
     } else {
+        // Si no hay mascota, reseteamos el formulario
         resetForm();
     }
 }, { immediate: true });
 
+// Función que maneja el envío del formulario
 const handleSubmit = async () => {
     try {
+        // Validamos los datos con Yup
         await petSchema.validate(formData.value, { abortEarly: false });
         errors.value = {};
         
+        // Preparamos los datos para enviar
         const dataToSend = { ...formData.value };
         if (props.pet) {
+            // Si estamos editando, añadimos el ID
             (dataToSend as any).pet_id = props.pet.pet_id;
         }
         
+        // Emitimos el evento save con los datos
         emit('save', dataToSend);
         resetForm();
     } catch (err: any) {
+        // Si hay errores de validación, los mostramos
         const validationErrors: Record<string, string> = {};
         err.inner.forEach((error: any) => {
             validationErrors[error.path] = error.message;
@@ -95,6 +115,7 @@ const handleSubmit = async () => {
     }
 };
 
+// Función para cerrar el modal
 const handleClose = () => {
     resetForm();
     emit('close');

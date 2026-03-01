@@ -1,10 +1,14 @@
 <script setup lang="ts">
+/**
+ * Componente PetCard - Tarjeta para mostrar información básica de una mascota
+ * Se usa en el carrusel de la página principal y en el listado de mascotas
+ */
 defineProps<{
     pet: {
-        pet_id: number;
-        name: string;
-        species: string;
-        photo_url: string;
+        pet_id: number;      
+        name: string;       
+        species: string;    
+        photo_url: string;   
     }
 }>();
 </script>

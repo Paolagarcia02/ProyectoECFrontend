@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useAuthStore } from '@/stores/authStore'; // Importamos el store de auth
+import { useAuthStore } from '@/stores/authStore';
 
+// Obtenemos el store de autenticación para verificar si el usuario está logueado
 const authStore = useAuthStore();
+// Estado para controlar si el menú móvil está abierto o cerrado
 const isMenuOpen = ref(false);
 
+// Función para alternar la visibilidad del menú
 const toggleMenu = () => {
     isMenuOpen.value = !isMenuOpen.value;
 };
 
+// Función para cerrar el menú
 const closeMenu = () => {
     isMenuOpen.value = false;
 };
