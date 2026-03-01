@@ -1,26 +1,33 @@
 <script setup lang="ts">
-
+/**
+ * Vista de Registro
+ * Permite a nuevos usuarios crear una cuenta en la aplicación
+ */
 import api from '@/api/axios';
 import router from '@/router';
 import Swal from 'sweetalert2';
 import { ref } from 'vue';
 
+// Variables reactivas para el formulario de registro
 const fullName = ref('');
 const email = ref('');
 const password = ref('');
 const confirmPassword = ref('');
 const errorMessage = ref('');
-const terms = ref(false);
+const terms = ref(false); // Aceptación de términos y condiciones
 
+// Función que maneja el envío del formulario de registro
 const handleRegister = async () => {
     errorMessage.value = '';
 
+    // Validamos que las contraseñas coincidan
     if (password.value !== confirmPassword.value) {
         errorMessage.value = "Las contraseñas no coinciden.";
         return;
     }
 
     try {
+        // Enviamos los datos del nuevo usuario al backend
         await api.post('/Auth/register', {
             userName: fullName.value,
             email: email.value,
@@ -28,17 +35,15 @@ const handleRegister = async () => {
         });
 
         await Swal.fire({
-            //AlERTA DE ÉXITO
             title: "¡Registro completado!",
             text: "Ya puedes iniciar sesión con tu cuenta.",
             icon: "success",
-            confirmButtonColor: "#f3a683", // Usa un color de tus variables SASS
+            confirmButtonColor: "#f3a683",
         });
 
         router.push({ name: 'login' });
 
     } catch (error) {
-        // ALERTA DE ERROR
         Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -47,9 +52,6 @@ const handleRegister = async () => {
         });
     }
 };
-
-
-
 </script>
 
 <template>
