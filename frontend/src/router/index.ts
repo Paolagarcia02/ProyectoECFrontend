@@ -1,9 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
+// Configuración del router con todas las rutas de la aplicación
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(), // Usa el historial del navegador (sin #)
   routes: [
     {
+      // Rutas públicas con layout principal (header + footer)
       path: '/',
       component: () => import('../layouts/MainLayout.vue'),
       children: [
@@ -14,6 +16,7 @@ const router = createRouter({
       ]
     },
     {
+      // Rutas de autenticación (login y registro) con layout sin header/footer
       path: '/auth',
       component: () => import('../layouts/AuthLayout.vue'),
       children: [
@@ -22,16 +25,16 @@ const router = createRouter({
       ]
     },
     {
+      // Ruta del panel de administración
       path: '/admin',
       name: 'admin',
       component: () => import('../layouts/AuthLayout.vue'),
       children: [
         { path : '', name: 'adminHome', component: () => import('../views/AdminView.vue') }
       ]
-      // Aquí es donde en el futuro pondremos la "guardia" para que 
-      // nadie entre escribiendo /admin en la URL si no es admin.
+      // TODO: Aquí se puede añadir un guard para proteger la ruta
+      // y que solo los administradores puedan acceder
     }
-
   ]
 });
 
