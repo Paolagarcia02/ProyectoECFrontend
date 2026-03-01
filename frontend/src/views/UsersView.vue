@@ -1,4 +1,9 @@
 <script setup lang="ts">
+/**
+ * Vista de Usuarios
+ * Muestra un listado de todos los usuarios registrados
+ * Solo accesible para administradores
+ */
 import { ref, computed, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
 import { useRouter } from 'vue-router';
@@ -7,12 +12,20 @@ import type { User } from '@/models/type';
 
 const authStore = useAuthStore();
 const router = useRouter();
+
+// Lista de usuarios
 const users = ref<User[]>([]);
+
+// Estado de carga
 const loading = ref(true);
+
+// Filtros de búsqueda
 const searchQuery = ref('');
 const selectedRole = ref('all');
 
+// Al montar el componente, verificamos permisos y cargamos usuarios
 onMounted(async () => {
+    // Si no es admin, redirigimos a la página principal
     if (!authStore.isAdmin) {
         router.push('/');
         return;
@@ -20,6 +33,7 @@ onMounted(async () => {
     await loadUsers();
 });
 
+// Función para cargar la lista de usuarios desde el backend
 const loadUsers = async () => {
     try {
         const response = await api.get('/User');
@@ -31,13 +45,16 @@ const loadUsers = async () => {
     }
 };
 
+// Computed: filtra los usuarios según rol y texto de búsqueda
 const filteredUsers = computed(() => {
     let result = users.value;
 
+    // Filtrar por rol si no es "all"
     if (selectedRole.value !== 'all') {
         result = result.filter(user => user.role === selectedRole.value);
     }
 
+    // Filtrar por texto de búsqueda (nombre o email)
     if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase();
         result = result.filter(user => 

@@ -1,23 +1,31 @@
 <script setup lang="ts">
+/**
+ * Vista de listado de mascotas
+ * Muestra todas las mascotas con filtros de búsqueda y estado
+ */
 import { ref, computed, onMounted } from 'vue';
 import { usePetStore } from '@/stores/petStore';
 import PetCard from '@/components/PetCard.vue';
 
 const petStore = usePetStore();
-const searchQuery = ref('');
-const selectedStatus = ref('all');
+const searchQuery = ref('');      // Texto de búsqueda
+const selectedStatus = ref('all'); // Estado seleccionado (all, En Adopción, etc.)
 
+// Cuando la vista se monta, cargamos las mascotas
 onMounted(() => {
     petStore.fetchPets();
 });
 
+// Computed: filtra las mascotas según los criterios de búsqueda y estado
 const filteredPets = computed(() => {
     let result = petStore.pets;
 
+    // Filtrar por estado si no es "all"
     if (selectedStatus.value !== 'all') {
         result = result.filter(pet => pet.status === selectedStatus.value);
     }
 
+    // Filtrar por texto de búsqueda (nombre o especie)
     if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase();
         result = result.filter(pet => 

@@ -1,4 +1,8 @@
 <script setup lang="ts">
+/**
+ * Vista de detalle de una mascota
+ * Muestra toda la información de una mascota específica
+ */
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/api/axios';
@@ -6,9 +10,14 @@ import type { Pet } from '@/models/type';
 
 const route = useRoute();
 const router = useRouter();
+
+// Estado para almacenar los datos de la mascota
 const pet = ref<Pet | null>(null);
+
+// Estado de carga
 const loading = ref(true);
 
+// Computed: calcula la edad de la mascota a partir de su fecha de nacimiento
 const petAge = computed(() => {
     if (!pet.value?.birth_date) return 'Desconocida';
     const birth = new Date(pet.value.birth_date);
@@ -16,18 +25,21 @@ const petAge = computed(() => {
     const years = today.getFullYear() - birth.getFullYear();
     const months = today.getMonth() - birth.getMonth();
     
+    // Si tiene más de 1 año, mostramos años, si no, meses
     if (years > 0) return `${years} año${years > 1 ? 's' : ''}`;
     return `${months} mes${months !== 1 ? 'es' : ''}`;
 });
 
+// Función para normalizar el estado (quitar acentos y espacios para CSS)
 const normalizeStatus = (status: string) => {
     return status
         .toLowerCase()
         .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/ /g, '-');
+        .replace(/[\u0300-\u036f]/g, '') // Quita acentos
+        .replace(/ /g, '-');              // Reemplaza espacios por guiones
 };
 
+// Al montar el componente, cargamos los datos de la mascota
 onMounted(async () => {
     try {
         const response = await api.get(`/Pet/${route.params.id}`);

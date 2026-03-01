@@ -1,4 +1,8 @@
 <script setup lang="ts">
+/**
+ * Vista principal (Home)
+ * Muestra el hero, valores de la clínica, carrusel de mascotas y servicios
+ */
 import { ref, onMounted } from 'vue';
 import { usePetStore } from '@/stores/petStore';
 import PetCard from '@/components/PetCard.vue';
@@ -10,16 +14,19 @@ const loadPets = async () => {
     await petStore.fetchPets();
 };
 
+// Cuando la página se monta, cargamos las mascotas
 onMounted(() => {
     loadPets();
 });
 
+// Función para desplazar el carrusel hacia la derecha
 const scrollNext = () => {
     if (carouselTrack.value) {
         carouselTrack.value.scrollBy({ left: 325, behavior: 'smooth' });
     }
 };
 
+// Función para desplazar el carrusel hacia la izquierda
 const scrollPrev = () => {
     if (carouselTrack.value) {
         carouselTrack.value.scrollBy({ left: -325, behavior: 'smooth' });

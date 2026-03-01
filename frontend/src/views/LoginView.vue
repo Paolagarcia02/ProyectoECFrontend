@@ -1,10 +1,13 @@
 <script setup lang="ts">
+/**
+ * Vista de Login
+ * Permite a los usuarios iniciar sesión en la aplicación
+ */
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '../api/axios';
 import { useAuthStore } from '../stores/authStore';
 import Swal from 'sweetalert2';
-
 
 const email = ref('');
 const password = ref('');
@@ -12,9 +15,11 @@ const router = useRouter();
 const authStore = useAuthStore();
 const errorMessage = ref('');
 
+// Función que maneja el envío del formulario de login
 const handleLogin = async () => {
     errorMessage.value = '';
     try {
+        // Enviamos las credenciales al backend
         const response = await api.post('/Auth/login', {
             email: email.value,
             password: password.value
@@ -22,7 +27,10 @@ const handleLogin = async () => {
 
         console.log("¿Qué hay dentro de response.data?:", response.data);
 
-        authStore.login(response.data.token, response.data.role); // Guarda el rol del usuario
+        // Guardamos el token y el rol en el store y localStorage
+        authStore.login(response.data.token, response.data.role);
+        
+        // Mostramos mensaje de éxito
         Swal.fire({
             position: "top-end",
             icon: "success",
@@ -41,9 +49,6 @@ const handleLogin = async () => {
         });
     }
 };
-
-
-
 </script>
 
 <template>
