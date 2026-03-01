@@ -10,7 +10,9 @@ services:
       - "8407:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__SaviaVetdb=Server=mysql;Port=3306;Database=SaviaVetdb;Uid=root;Pwd=DockerMysql1#;
+      - ConnectionStrings__SaviaVetdb=Server=mysql;Port=3306;Database=SaviaVetdb;Uid=root;Pwd=DockerMysql1#;CharSet=utf8mb4;
+      - LANG=es_ES.UTF-8
+      - LC_ALL=es_ES.UTF-8
     depends_on:
       - mysql
 
@@ -22,6 +24,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=DockerMysql1#
       - MYSQL_DATABASE=SaviaVetdb
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
       - BbDdScripts:/var/lib/mysql
       - ./backend:/docker-entrypoint-initdb.d/
