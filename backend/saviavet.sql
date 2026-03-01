@@ -118,9 +118,9 @@ INSERT INTO Service (Name, Description, Icon) VALUES
 ('Urgencias', 'Atención prioritaria para casos críticos.', '🚨');
 
 INSERT INTO User (Full_name, Email, Password_hash, Role, Franchise_id) VALUES 
-('Dr. House', 'house@savia.com', 'hashed_secret', 'Vet', 1),
-('Alice Smith', 'alice@gmail.com', 'hashed_secret', 'User', NULL),
-('Paola García', 'paola@gmail.com', 'hashed_secret', 'Admin', NULL);
+('Vet', 'vet@savia.com', '1234', 'Vet', 1),
+('User', 'user@gmail.com', '1234', 'User', NULL),
+('Admin', 'admin@savia.com', '1234', 'Admin', NULL);
 
 INSERT INTO Pet (Name, Species, Breed, Birth_date, Photo_url, Description, Status, Owner_id) 
 VALUES 
