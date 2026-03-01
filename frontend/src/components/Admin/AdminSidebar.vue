@@ -1,8 +1,16 @@
 <script setup lang="ts">
+/**
+ * Componente AdminSidebar
+ * Barra lateral de navegación del panel de administración
+ * Permite cambiar entre las diferentes secciones (mascotas, usuarios, etc.)
+ */
+
+// Props: recibe la pestaña activa actual
 defineProps<{
     activeTab: string
 }>();
 
+// Emits: emite un evento cuando se cambia de pestaña
 const emit = defineEmits<{
     (e: 'changeTab', tab: string): void
 }>();
@@ -46,8 +54,7 @@ const emit = defineEmits<{
                 <span class="nav-text">Volver a la Web</span>
             </router-link>
         </nav>
-
-        </aside>
+    </aside>
 </template>
 
 <style scoped lang="scss">
@@ -85,7 +92,6 @@ const emit = defineEmits<{
         max-width: 100%;
         max-height: 100%;
         object-fit: contain;
-        filter: brightness(0) invert(1);
     }
 
     .sidebar-title {

@@ -1,13 +1,20 @@
 <script setup lang="ts">
+/**
+ * Componente AdminUserRow
+ * Fila de la tabla de usuarios en el panel de administración
+ * Muestra la información de un usuario y botones de acción
+ */
 import type { User } from '@/models/type';
 
+// Props: recibe los datos del usuario
 defineProps<{
     user: User
 }>();
 
+// Emits: emite eventos para eliminar o cambiar el rol del usuario
 const emit = defineEmits<{
     (e: 'delete', id: number, name: string): void;
-    (e: 'changeRole', user: User): void;
+    (e: 'edit', user: User): void;
 }>();
 </script>
 
@@ -23,7 +30,7 @@ const emit = defineEmits<{
         </td>
         <td>
             <div class="action-buttons">
-                <button @click="emit('changeRole', user)" class="btn-icon" title="Cambiar Rol">🔑</button>
+                <button @click="emit('edit', user)" class="btn-icon" title="Editar">✏️</button>
                 <button @click="emit('delete', user.user_id, user.full_name)" class="btn-icon btn-icon--delete" title="Eliminar Usuario">🗑️</button>
             </div>
         </td>

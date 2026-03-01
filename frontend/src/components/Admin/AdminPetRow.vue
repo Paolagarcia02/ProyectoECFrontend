@@ -1,21 +1,29 @@
 <script setup lang="ts">
+/**
+ * Componente AdminPetRow
+ * Fila de la tabla de mascotas en el panel de administración
+ * Muestra la información de una mascota y botones de acción (editar/eliminar)
+ */
 import type { Pet } from '@/models/type'; 
 
+// Props: recibe los datos de la mascota
 defineProps<{
     pet: Pet 
 }>();
 
+// Emits: emite eventos para editar o eliminar la mascota
 const emit = defineEmits<{
     (e: 'delete', id: number, name: string): void;
     (e: 'edit', pet: Pet): void;
 }>();
 
+// Función para normalizar el estado (quitar acentos y espacios para CSS)
 const normalizeStatus = (status: string) => {
     return status
         .toLowerCase()
         .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/ /g, '-');
+        .replace(/[\u0300-\u036f]/g, '') // Elimina acentos
+        .replace(/ /g, '-');              // Reemplaza espacios por guiones
 };
 </script>
 
