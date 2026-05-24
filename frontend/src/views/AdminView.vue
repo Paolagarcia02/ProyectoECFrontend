@@ -5,6 +5,7 @@
  * Solo accesible para usuarios con rol de Admin
  */
 import { ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { usePetStore } from '@/stores/petStore';
 import api from '@/api/axios';
 import AdminSidebar from '@/components/Admin/AdminSidebar.vue';
@@ -13,12 +14,25 @@ import AdminUserRow from '@/components/Admin/AdminUserRow.vue';
 import PetFormModal from '@/components/Admin/PetFormModal.vue';
 import UserFormModal from '@/components/Admin/UserFormModal.vue';
 import type { User, Pet } from '@/models/type';
+import AppointmentFormModal from '@/components/Admin/AppointmentFormModal.vue';
+import { useAppointmentStore, type Appointment } from '@/stores/appointmentStore';
+
 import Swal from 'sweetalert2';
 
 const petStore = usePetStore();
+const appointmentStore = useAppointmentStore();
 const users = ref<User[]>([]);
+const route = useRoute();
+const router = useRouter();
 
-const currentTab = ref('pets');
+// Lee la pestaña de la URL, si no hay ninguna usa 'pets' por defecto
+const currentTab = ref((route.query.tab as string) || 'pets');
+
+// Cuando cambia la pestaña, actualiza la URL
+function changeTab(tab: string) {
+    currentTab.value = tab;
+    router.replace({ query: { tab } });
+}
 
 const showPetModal = ref(false);
 const showUserModal = ref(false);
@@ -36,11 +50,46 @@ const loadUsers = async () => {
     }
 };
 
-// Al montar el componente, cargamos mascotas y usuarios
+// Al montar el componente, cargamos mascotas, usuarios y citas
 onMounted(() => {
     petStore.fetchPets();
     loadUsers();
+    appointmentStore.fetchAppointments();
+    loadFormData();
 });
+
+const showAppointmentModal = ref(false);
+const editingAppointment = ref<Appointment | null>(null);
+
+function openAppointmentModal(a?: Appointment) {
+    editingAppointment.value = a || null;
+    showAppointmentModal.value = true;
+}
+
+function closeAppointmentModal() {
+    editingAppointment.value = null;
+    showAppointmentModal.value = false;
+}
+
+async function saveAppointment(data: any) {
+    if (data.appointment_id) {
+        await appointmentStore.updateAppointment(data);
+    } else {
+        await appointmentStore.createAppointment(data);
+    }
+    closeAppointmentModal();
+}
+
+// Listas para los desplegables del formulario de citas
+const vets = ref<User[]>([]);
+const franchises = ref<{ franchise_id: number; name: string }[]>([]);
+
+async function loadFormData() {
+    const resUsers = await api.get('/User');
+    vets.value = resUsers.data.filter((u: User) => u.role === 'Vet');
+    const resFranchises = await api.get('/Franchise');
+    franchises.value = resFranchises.data;
+}
 
 // Función genérica para eliminar mascotas o usuarios
 const deleteItem = async (id: number, name: string, type: 'Pet' | 'User') => {
@@ -131,7 +180,7 @@ const saveUser = async (userData: Partial<User>) => {
 
 <template>
     <div class="admin-layout">
-        <AdminSidebar :activeTab="currentTab" @changeTab="(tab: string) => currentTab = tab" />
+        <AdminSidebar :activeTab="currentTab" @changeTab="changeTab" />
 
         <main class="admin-content">
             <section v-if="currentTab === 'pets'">
@@ -179,7 +228,51 @@ const saveUser = async (userData: Partial<User>) => {
                     </tbody>
                 </table>
             </section>
+            <section v-if="currentTab === 'appointments'">
+                <div class="header-actions">
+                    <h1>Gestión de Citas</h1>
+                    <button @click="openAppointmentModal()" class="btn--primary">+ Nueva Cita</button>
+                </div>
+
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha y hora</th>
+                            <th>Motivo</th>
+                            <th>Estado</th>
+                            <th>ID Mascota</th>
+                            <th>ID Vet</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="a in appointmentStore.appointments" :key="a.appointment_id">
+                            <td>{{ new Date(a.date_time).toLocaleString('es-ES') }}</td>
+                            <td>{{ a.reason }}</td>
+                            <td>{{ a.status || 'Pendiente' }}</td>
+                            <td>{{ a.pet_id }}</td>
+                            <td>{{ a.vet_id }}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-icon" @click="openAppointmentModal(a)" title="Editar">✏️</button>
+                                    <button class="btn-icon btn-icon--delete" @click="appointmentStore.deleteAppointment(a.appointment_id)" title="Eliminar">🗑️</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
         </main>
+
+        <AppointmentFormModal
+            :show="showAppointmentModal"
+            :appointment="editingAppointment"
+            :pets="petStore.pets"
+            :vets="vets"
+            :franchises="franchises"
+            @close="closeAppointmentModal"
+            @save="saveAppointment"
+        />
 
         <PetFormModal 
             :show="showPetModal" 
@@ -201,14 +294,12 @@ const saveUser = async (userData: Partial<User>) => {
 
 .admin-layout {
     display: flex;
-    height: 100vh;
+    min-height: 100vh;
     width: 100vw;
     background-color: #f0f2f5;
-    overflow: hidden;
 
     .admin-content {
         flex: 1;
-        height: 100vh;
         overflow-y: auto;
         padding: 40px;
         display: flex;
