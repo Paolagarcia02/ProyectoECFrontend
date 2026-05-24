@@ -13,6 +13,7 @@ const router = createRouter({
         { path: 'pets', name: 'pets', component: () => import('../views/PetsView.vue') },
         { path: 'pet/:id', name: 'petDetail', component: () => import('../views/PetDetailView.vue') },
         { path: 'users', name: 'users', component: () => import('../views/UsersView.vue') },
+        { path: 'appointments', name: 'appointments', component: () => import('../views/AppointmentsView.vue') },
       ]
     },
     {
