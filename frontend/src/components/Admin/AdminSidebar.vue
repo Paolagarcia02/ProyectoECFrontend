@@ -42,6 +42,14 @@ const emit = defineEmits<{
                 <span class="nav-text">Usuarios</span>
             </button>
 
+            <button 
+                @click="emit('changeTab', 'appointments')" 
+                :class="['nav-item', { 'active': activeTab === 'appointments' }]"
+            >
+                <span class="nav-icon">📅</span>
+                <span class="nav-text">Citas</span>
+            </button>
+
             <div class="sidebar-divider"></div>
 
             <router-link to="/users" class="nav-item">
